@@ -122,14 +122,7 @@
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
       let rows = this.attributes;
-      let pieces = {}; // Track pieces found
       for (let r = 0; r < rows.n; r++) { //Check each row
-        // for (let c = 0; c < rows[r].length; c++) {
-        //   if (rows[r][c] === 1) { //If piece found
-        //     if (pieces[c]) { return true; } //And a piece was already found in column
-        //     pieces[c] = true; //Else mark that a piece was found in column and continue
-        //   }
-        // }
         if (this.hasColConflictAt(r)) { return true; }
       }
       return false;
@@ -142,12 +135,39 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      let rows = this.attributes;
+      let hasPiece = false;
+
+      let mdci = majorDiagonalColumnIndexAtFirstRow; //current index
+
+      for (let r = 0; r < rows.n; r++) { //Iterate through each row
+        if (mdci >= rows.n) { //Checking whether mdci is the end of the MD
+          break;
+        }
+        if (mdci > -1) { //Checking that the current spot exists on the board
+          if (rows[r][mdci] === 1) {
+            if (hasPiece) { return true; }
+            hasPiece = true;
+          }
+        }
+        mdci++; //Update mdci to the index in the next row
+
+      }
+      return false;
+      
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      let rows = this.attributes;
+      let end = (rows.n > 1) ? rows.n - 2 : 0; //Last ci to be part of MD
+      let c = -1 * end; //First mdci
+
+      while (c <= end) {
+        if (this.hasMajorDiagonalConflictAt(c)) { return true; }
+        c++;
+      }
+      return false;
     },
 
 
@@ -157,12 +177,37 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      let rows = this.attributes;
+      let hasPiece = false;
+
+      let mdci = minorDiagonalColumnIndexAtFirstRow;
+
+      for (let r = 0; r < rows.n; r++) {
+        if (mdci < 0) { //Check whether mdci is at the end of the MD
+          break;
+        }
+        if (mdci < rows.n) { //Check that position is on board
+          if (rows[r][mdci] === 1) {
+            if (hasPiece) { return true; }
+            hasPiece = true;
+          }
+        }
+        mdci--; //Update mdci for next row
+      }
+      return false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      let rows = this.attributes;
+      let end = 2 * rows.n - 3;
+      let c = 1;
+
+      while (c <= end) {
+        if (this.hasMinorDiagonalConflictAt(c)) { return true; }
+        c++;
+      }
+      return false;
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
