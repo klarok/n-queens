@@ -79,12 +79,25 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      let row = this.attributes[rowIndex];
+      let hasPiece = false;
+      for (let c = 0; c < row.length; c++) {
+        if (row[c] === 1) { //If piece found
+          if (hasPiece) { return true; } //And there's already a piece on the row
+          hasPiece = true; //Else set hasPiece and continue checking
+        }
+
+      }
+      return false;
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      return false; // fixme
+      let rows = this.attributes;
+      for (let row in rows) {
+        if (this.hasRowConflictAt(row)) { return true; } 
+      }
+      return false;
     },
 
 
@@ -94,12 +107,32 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      let rows = this.attributes;
+      let hasPiece = false;
+      let c = Number(colIndex);
+      for (let row in rows) {
+        if (rows[row][c] === 1) {
+          if (hasPiece) { return true; }
+          hasPiece = true;
+        }
+      }
+      return false;
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      return false; // fixme
+      let rows = this.attributes;
+      let pieces = {}; // Track pieces found
+      for (let r = 0; r < rows.n; r++) { //Check each row
+        // for (let c = 0; c < rows[r].length; c++) {
+        //   if (rows[r][c] === 1) { //If piece found
+        //     if (pieces[c]) { return true; } //And a piece was already found in column
+        //     pieces[c] = true; //Else mark that a piece was found in column and continue
+        //   }
+        // }
+        if (this.hasColConflictAt(r)) { return true; }
+      }
+      return false;
     },
 
 
