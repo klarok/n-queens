@@ -16,17 +16,12 @@
 
 
 window.findNRooksSolution = function(n) {
-  var solution = undefined; //fixme
-  let row = new Array(n).fill(0);
-  let matrix = new Array(n).fill(row);
-  let board = new Board(matrix);
+  var solution = Array.from({length: n}, () => new Array(n).fill(0));
 
-  // for (let r = 0; r < n; r++) {
-  //   for (let c = 0; c < n; c++) {
-  //     let shrunk = new Board(new Array(n - 1).fill(new Array(n - 1).fill(0)));
+  for (let r = 0; r < n; r++) {
+    solution[r][r] = 1;
+  }
 
-  //   }
-  // }
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
