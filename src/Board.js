@@ -121,9 +121,12 @@
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      let rows = this.attributes;
-      for (let r = 0; r < rows.n; r++) { //Check each row
-        if (this.hasColConflictAt(r)) { return true; }
+      //let rows = this.attributes;
+      // for (let r = 0; r < rows.n; r++) { //Check each row
+      //   if (this.hasColConflictAt(r)) { return true; }
+      // }
+      for (let c = 0; c < this.attributes.n; c++) {
+        if (this.hasColConflictAt(c)) { return true; }
       }
       return false;
     },

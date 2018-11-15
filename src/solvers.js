@@ -48,25 +48,54 @@ window.findNRooksSolution = function(n) {
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
   let solutionCount = 0;
+
+  var solution = Array.from({length: n}, () => new Array(n).fill(0));
   let counts = {}; //Store already calculated solutions
 
-  let calculateRooks = function(n) {
-    let count = 0;
-    if (counts.hasOwnProperty(n)) { return counts[n]; } //Check if already calculated
-    if (n < 2) { //If n is 1 or 0, just return
-      counts[n] = n;
-      return n; 
-    } 
+  // let calculateRooks = function(n) {
+  //   let count = 0;
+  //   if (counts.hasOwnProperty(n)) { return counts[n]; } //Check if already calculated
+  //   if (n < 2) { //If n is 1 or 0, just return
+  //     counts[n] = n;
+  //     return n; 
+  //   } 
 
-    for (let c = 0; c < n; c++) {
-      count += calculateRooks(n - 1);
+  //   for (let c = 0; c < n; c++) {
+  //     count += calculateRooks(n - 1);
+  //   }
+  //   counts[n] = count; //Store calculated solution number
+
+  //   return count;
+  // }
+
+  // solutionCount = calculateRooks(n);
+
+  let placeRook = function(rowIndex) {
+    if (counts.hasOwnProperty(n - rowIndex)) { //Check for solved sub-problems
+      return counts[n - rowIndex];
     }
-    counts[n] = count; //Store calculated solution number
 
+    let count = 0;
+    if (rowIndex >= n) { //Placed a rook in every row; 1 solution found
+      return 1;
+    }
+    let row = solution[rowIndex];
+    for (let c = 0; c < n; c++) { //Check every column in current row
+      row[c] = 1; //Try to place a rook
+      if (new Board(solution).hasAnyRooksConflicts()) {
+        row[c] = 0; //Reset and try next column
+      } else {
+        count += placeRook(rowIndex + 1); //Try to place next rook
+        row[c] = 0; //Done placing next rook, reset and try next column
+      }
+    }
+    if (rowIndex === 0) { //Wrapped up recursive calls, about to return final count
+      counts[n] = count;
+    }
     return count;
-  }
+  }; //What about when things are done for a given n?
 
-  solutionCount = calculateRooks(n);
+  solutionCount = placeRook(0);
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
