@@ -22,7 +22,6 @@ window.findNRooksSolution = function(n) {
     solution[r][r] = 1;
   }
 
-
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
 };
@@ -41,7 +40,33 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
+  var solution = Array.from({length: n}, () => new Array(n).fill(0));
+
+  let placeQueen = function(rowIndex) { //Attempts to place queen on given row
+    //Base Case: there's no more rows left; implies all queens have been placed
+    let row = solution[rowIndex];
+    if (rowIndex >= n) { return true; }
+
+    for (let c = 0; c < n; c++) { //Try every possible column in that row
+      row[c] = 1; //Place queen
+      if (hasConflicts()) { //If new queen conflicts with something
+        row[c] = 0; //Reset and try next column
+      } else { //Attempt to place a queen on the next row
+        let placedQueenSuccessfully = placeQueen(rowIndex + 1);
+        if (placedQueenSuccessfully) { return true; }
+        row[c] = 0; //If did not place queen successfully, reset and try next column
+      }
+    }
+    return false;
+
+  }
+
+  let hasConflicts = function() {
+    let b = new Board(solution);
+    return (b.hasAnyQueensConflicts());
+  }
+
+  placeQueen(0);
 
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
