@@ -18,21 +18,55 @@
 window.findNRooksSolution = function(n) {
   var solution = Array.from({length: n}, () => new Array(n).fill(0));
 
-  for (let r = 0; r < n; r++) {
-    solution[r][r] = 1;
-  }
+  // for (let r = 0; r < n; r++) {
+  //   solution[r][r] = 1;
+  // }
 
+  let placeRook = function(rowIndex) {
+    if (rowIndex >= n) { return true; }
+
+    let row = solution[rowIndex];
+    for (let c = 0; c < n; c++) {
+      row[c] = 1;
+      if (new Board(solution).hasAnyRooksConflicts()) {
+        row[c] = 0;
+      } else {
+        let placedRookSuccessfully = placeRook(rowIndex + 1);
+        if (placedRookSuccessfully) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  placeRook(0);
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = n;
-  
-  for (let i = 1; i < n; i++) {
-    solutionCount = solutionCount * i;
+  let solutionCount = 0;
+  let counts = {}; //Store already calculated solutions
+
+  let calculateRooks = function(n) {
+    let count = 0;
+    if (counts.hasOwnProperty(n)) { return counts[n]; } //Check if already calculated
+    if (n < 2) { //If n is 1 or 0, just return
+      counts[n] = n;
+      return n; 
+    } 
+
+    for (let c = 0; c < n; c++) {
+      count += calculateRooks(n - 1);
+    }
+    counts[n] = count; //Store calculated solution number
+
+    return count;
   }
+
+  solutionCount = calculateRooks(n);
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
